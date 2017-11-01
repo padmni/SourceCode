@@ -1,0 +1,96 @@
+# creating a table for a relationship "works_on" where both attributes are foreign keys of parent table and PK in "works_on" table#
+			SQL> CREATE TABLE WORKS_ON(ENO NUMBER(3) REFERENCES EMP(ENO),
+			PNO NUMBER(3) REFERENCES PROJECT(PNO),
+			CONSTRAINT PK_WORKS_ON PRIMARY KEY(ENO,PNO));
+			
+#OR we can  use command: #
+			SQL> CREATE TABLE WORKS_ON(ENO NUMBER(3),  PNO NUMBER(3),
+			CONSTRAINT PK_WORKS PRIMARY KEY(ENO,PNO),
+			CONSTRAINT FK_WORKS FOREIGN KEY(ENO) REFERENCES EMP(ENO),
+			CONSTRAINT FK_PRJ  FOREIGN KEY(PNO) REFERENCES PROJECT(PNO)
+			CONSTRAINT CHECK_PRJ CHECK NO_OF_HOURS>20);
+			
+#TO remove primary key or a foreign key using ALTER command#
+			SQL> ALTER TABLE PROJECT DROP PRIMARY KEY;
+			SQL> ALTER TABLE PROJECT DROP FOREIGN KEY;
+			
+# Adding primary key usiing ALTER command#
+			SQL> ALTER  TABLE WORKS_ON ADD CONSTRAINT PK_EMP PRIMARY KEY(ENO);
+			SQL> ALTER  TABLE WORKS_ON ADD CONSTRAINT FK_PRJ FOREIGN KEY(PNO);				
+
+#Adding a column using ALTER command#
+			SQL> ALTER TABLE EMP ADD NO_OF_HOURS NUMBER(3);
+			SQL> ALTER TABLE EMP ADD NO_OF_HOURS NUMBER(3) CHECK(NO_OF_HOURS>20);
+			SQL>  TABLE EMP ADD NO_OF_HOURS NUMBER(3) NOT NULL;
+			
+			SQL> CREATE TABLE CLASS(CNAME VARCHAR(10) PRIMARY KEY, MEET VARCHAR(10),
+			  2  ROOM VARCHAR(10),FID NUMBER(3));
+
+Table created.
+
+			SQL> desc class
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ---------------------
+
+ CNAME                                     NOT NULL VARCHAR2(10)
+ MEET                                               VARCHAR2(10)
+ ROOM                                               VARCHAR2(10)
+ FID                                                NUMBER(3)
+
+			SQL> ALTER TABLE CLASS ADD FLOOR CHAR(3);
+
+Table altered.
+
+SQL> desc class
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ---------------------
+
+ CNAME                                     NOT NULL VARCHAR2(10)
+ MEET                                               VARCHAR2(10)
+ ROOM                                               VARCHAR2(10)
+ FID                                                NUMBER(3)
+ FLOOR                                              CHAR(3)
+
+
+
+# Removing a column using ALTER command#   
+			SQL> ALTER TABLE EMP DROP COLUMN  NO_OF_HOURS;
+			
+			SQL> DESC CLASS
+ Name                                      Null?    Type
+ ----------------------------------------- -------- -------------
+
+ CNAME                                     NOT NULL VARCHAR2(10)
+ MEET                                               VARCHAR2(10)
+ ROOM                                               VARCHAR2(10)
+ FID                                                NUMBER(3)
+ FLOOR                                              CHAR(3)
+
+			SQL> ALTER TABLE CLASS DROP COLUMN FLOOR;
+
+Table altered.
+
+			SQL> DESC CLASS
+ Name                                      Null?    Type
+ ----------------------------------------- -------- -------------
+
+ CNAME                                     NOT NULL VARCHAR2(10)
+ MEET                                               VARCHAR2(10)
+ ROOM                                               VARCHAR2(10)
+ FID                                                NUMBER(3)
+ 
+#Modifying column using  ALTER command#
+ 
+			SQL> ALTER TABLE CLASS MODIFY FID VARCHAR(10);
+
+Table altered.
+			
+NOTE: We cannot decrease the size allocated to a column, i.e., if a column already has varchar(10), we cannot change it to char(4)
+      because char datatype is fixed.
+	
+
+# USER_CONSTRAINT is a table maintained by database to maintain some data#
+			SELECT * FROM USER_CONSTRAINT;
+			
+NOTE: ROLLBACK andCOMMIT does not work for DDL commands
+

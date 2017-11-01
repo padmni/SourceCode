@@ -1,0 +1,116 @@
+<h3>Importing Dataset</h3>
+```{r}
+library(missForest)
+library(mice)
+library(datasets)
+library(dplyr)
+tt <- read.csv("D:/Academics/HACKATHON/Problem5_IPL Delivery/Data Set - IPL Deliveries.csv")
+plot_imp<-aggr(tt,ylab=c("missing data","pattern"))
+```
+1.	Summary Analysis describing the number of 
+a.	Columns
+b.	rows 
+c.	names of different columns
+d.	The class types of the columns
+```{r}
+ncol(tt)
+nrow(tt)
+colnames(tt)
+for(i in 1:ncol(tt))
+{
+  print(class(tt[,i]))
+}
+```
+2.	Check the Data Quality of the data. If you realize there are null values in it, use Data Imputation for filling the data. Justify the methodology you follow for Data Imputaion. 
+```{r}
+#Checking each column for NULL values
+for(i in 1:ncol(tt))
+{
+if(!is.numeric(tt[,i]))
+{
+tt[,i]=as.numeric(tt[,i])
+}
+}
+
+library(VIM)#aggr()belongs to VIM package
+plot_imp<-aggr(tt,ylab=c("missing data","pattern"))
+
+```
+The plot above shows that there are no null values in the dataset. So, Data imputation is not required here.
+3.	Do Univariate Analysis of all the variables present
+```{r}
+for(i in 1:ncol(tt))
+{
+  plot(tt[,i])
+}
+```
+4.	The target variables in this dataset is the attribute "total runs" Do a bivariate analysis of this variable with all the other attributes. Also give your inferences from the graph generated.
+```{r}
+for(i in 1:ncol(tt))
+{
+  plot(tt[,i],tt$total_runs)
+}
+```
+<h3>Inferences</h3>
+Total runs Vs Batting Team
+<h6>This plot shows that the maximum runs scored by each team in each ball.</h6>
+i.e.,  the maximum runs scored by CSK is 7 and by RPS is 6.
+<h6>Total runs Vs Bowling Team</h6>
+This plot shows all the scores of each batsman for each ball.
+
+5.	Draw a multivariate graph for all the variables
+```{r}
+plot(tt)
+```
+6.	Apply PCA on this dataset after removing categorical variables
+```{R}
+#removing columns with Unique values
+j=0
+i=1
+vec=c()
+for(j in 1:ncol(tt))
+{
+  if(!(length(unique(tt[,j]))==1))
+  {
+    vec[i]=j
+    i=i+1
+  }
+    
+}
+tt=tt[c(vec)]
+ncol(tt)
+
+```
+7.	After applying PCA, draw inferences from the Principal Components generated using appropriate plots. Describe your inferences
+```{r}
+tt.test <- tt[1:27320,]
+tt.train <- tt[-(1:27320),]
+
+ipl_PCA <-princomp(tt.train)
+names(ipl_PCA)
+ipl_PCA$center #mean of variables
+ipl_PCA$scale 
+biplot(ipl_PCA,scale = T)
+ipl_PCA$sdev #std. dev of variables
+ipl_PCA$call
+ipl_PCA$loadings
+ipl_PCA$scores
+
+ipl_sd <-ipl_PCA$sdev
+ipl_var <- (ipl_PCA$sdev)^2 #or (att_PCA$sdev) **2 Calculating variance for PCA
+
+ipl_ror_var<- ipl_var/sum(ipl_var)
+#Sciplree Plot is Used to understand the variance cobered by the Principal cpmponent(PCs)
+plot(ipl_ror_var,xlab = "Principal Component" ,  ylab = "Proportion of variance explained",type= "b",title = "scree plot")
+
+#
+plot(cumsum(ipl_ror_var),xlab = "Principal Component" ,  ylab = "Proportion of variance explained",type= "b",title = "Cumulative scree plot")
+```
+
+<h3>Inferences</h3>
+There are 21 Principle components created.
+Biplot is a graphical representation for multivariate data. Biplot is plotted againts all PCs created.This means that the plot shows 22 dimensions.
+
+A Scree Plot is a simple line segment plot that shows the fraction of total variance in the data as explained or represented by each PC. The PCs are ordered, and by definition are therefore assigned a number label, by decreasing order of contribution to total variance.
+
+The cumulative scree plot says that the actual number of components that are required are 7, which covers all the variables in the data set. 

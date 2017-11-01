@@ -1,0 +1,81 @@
+#CREATING A TABLE#
+create table DEPT(dno number(3), dname varchar(20),loc varchar(20));
+
+#INSERTING RECORD#
+insert into dept values(111,'Padmni','Bangalore');
+
+#FOR MULTIPLE INSERTION#
+insert into dept values('&dno','&dname','&loc');
+OUTPUT:
+Enter value for dno: 222
+Enter value for dname: Finance
+Enter value for loc: Mumbai
+old   1: insert into dept values('&dno','&dname','&loc')
+new   1: insert into dept values('222','Finance','Mumbai')
+
+#NO TWO COLUMNS IN A DB TABLE CAN HAVE SAME NAME
+SQL> create table DEPT1(dno number,dno varchar(20),location varchar(20));
+create table DEPT1(dno number,dno varchar(20),location varchar(20))
+                              *
+ERROR at line 1:
+ORA-00957: duplicate column name
+
+#DB CANNOT HAVE TABLES WITH SAME NAMES#
+SQL> create table DEPT(dno number,dname varchar(20),location varchar(20));
+create table DEPT(dno number,dname varchar(20),location varchar(20))
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+#DESCRIBE COMMAND#
+SQL> desc dept
+ Name                                      Null?    Type
+ ----------------------------------------- -------- -------------------------
+
+ DNO                                                NUMBER(3)
+ DNAME                                              VARCHAR2(20)
+ LOCATION                                           VARCHAR2(20)
+ 
+If size is not specified for number data type, Default value '38' is taken; i.e., 38 characters or 38 bytes.
+
+#USE OF PRIMARY KEY#
+SQL> create table DEPT(dno number primary key,dname varchar(20),location varchar
+(20));
+
+Table created.
+
+SQL>
+SQL> insert into dept values('&dno','&dname','&loc');
+Enter value for dno: 10
+Enter value for dname: CSE
+Enter value for loc: Manipal
+old   1: insert into dept values('&dno','&dname','&loc')
+new   1: insert into dept values('10','CSE','Manipal')
+
+1 row created.
+
+1.Inserting duplicate value
+SQL> insert into dept values('&dno','&dname','&loc');
+Enter value for dno: 10
+Enter value for dname: ECE
+Enter value for loc: Manipal
+old   1: insert into dept values('&dno','&dname','&loc')
+new   1: insert into dept values('10','ECE','Manipal')
+insert into dept values('10','ECE','Manipal')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (HR.SYS_C007084) violated
+
+2.Inserting NULL value
+SQL> insert into dept values('&dno','&dname','&loc');
+Enter value for dno:
+Enter value for dname: ECE
+Enter value for loc: Manipal
+old   1: insert into dept values('&dno','&dname','&loc')
+new   1: insert into dept values('','ECE','Manipal')
+insert into dept values('','ECE','Manipal')
+                        *
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("HR"."DEPT"."DNO")
+
+

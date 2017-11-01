@@ -1,0 +1,20 @@
+Suppose x0 = 1 and x1 = 2 and
+xj = xj???1 + 2/(xj???1)
+for j = 1, 2, . . . .
+Write a function testLoop which takes the single argument n and returns the first n ??? 1 values of the
+sequence {xj}j???0: that means the values of x0, x1, x2, . . . , xn???2.
+
+testLoop=function(n)
+{
+ j=3
+ c=1
+ while(j<=n-1)
+ {
+   c[1]=1
+   c[2]=2
+   c[j]=c[j-1]+2/c[j-1]
+   j=j+1
+ }
+  return(c)
+}
+testLoop(6)

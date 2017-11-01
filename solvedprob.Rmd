@@ -1,0 +1,67 @@
+q1)Write a program to create a vector containing 10 elements, 
+then copy the contents of the original vector into a new 
+vector using loops
+```{r}
+vec=c(5:10,1:4)
+vec2=c()
+for(i in 1:length(vec))
+{
+  vec2[i]=vec[i]
+}
+vec2
+```
+
+q2)A program to find the sum of numbers between the range 
+which is specified by the user. This has to be done using 
+functions and functions must return the sum.  
+```{r}
+func=function(a,b)
+{
+  len=b-a
+  sum1=a
+  for(i in 1:len)
+  {
+    sum1=sum1+i
+  }
+  sum1
+}
+
+func(10,30)
+```
+q3)In the USArrests data set, find out the top 3 states which
+has the highest assault 
+```{r}
+tt<-data.frame(USArrests)
+tt<-tt[order(tt$Assault,decreasing = TRUE),]
+tt[1:3,][0]
+
+n<-data.frame(USArrests)
+n<-n[order(n$Murder,decreasing = TRUE),]
+n[1,][0]
+```
+
+q4)A program to create a new data frame which contains all 
+the data from USArrests, except that instead of the names of 
+the states, they should be replaced by numbers starting from 
+1 
+```{r}
+df1<-data.frame(USArrests)
+rownames(df1)<-c(1:nrow(df1))
+#rownames(df1)<-c(1:50)
+df1
+
+#or
+j=1
+new_df=data.frame()
+  for(j in 1:ncol(USArrests))
+  {
+    for(i in 1:nrow(USArrests))
+    {
+      new_df[i,j]=USArrests[i,j]
+    }
+  }
+new_df
+
+```
+
+

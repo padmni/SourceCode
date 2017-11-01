@@ -1,0 +1,189 @@
+#NATURAL JOIN
+
+
+SQL> DESC DEPARTMENT
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DNUM                                      NOT NULL CHAR(4)
+ DNAME                                              VARCHAR2(20)
+ MGRENO                                             CHAR(4)
+ MGRSTRTDATE                                        DATE
+
+SQL> DESC WORK
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EMPNO                                     NOT NULL CHAR(4)
+ PNO                                       NOT NULL CHAR(4)
+ HOURS                                              NUMBER(3)
+
+
+
+SQL> SELECT  * FROM DEPARTMENT NATURAL JOIN WORK WHERE DNUM=EMPNO;
+
+no rows selected
+
+
+NOTE : JOIN STILL HAPPENED BASED ON THE DOMAIN TYPE OF DNUM AND EMPNO BUT DISPLAYS NOTHING SINCE THERE ARE NO SIMILAR VALUES.
+
+
+#SELF JOIN FINDING OUT THE SUPERVISOR NAMES AND ID AND WHO THEY SUPERVISE
+
+SQL> SELECT A.FNAME NAME,A.EMP_NO ENO,B.FNAME ENAME,B.EMP_NO S_NO FROM EMPLOYEE A,EMPLOYEE B WHERE A.
+EMP_NO=B.SUPER_ENO;
+
+NAME                 ENO  ENAME                S_NO
+-------------------- ---- -------------------- ----
+ABHI                 E1   ABHI                 E1
+ABHI                 E1   PADDY                E2
+ABHI                 E1   BHAVNA               E3
+PADDY                E2   JOE                  E4
+BHAVNA               E3   JOSEPH               E5
+
+
+#OUTER JOIN
+
+
+
+#AGGREGATE FUNCTION 
+
+SQL> SELECT AVG(FNAME) FROM EMPLOYEE;
+SELECT AVG(FNAME) FROM EMPLOYEE
+           *
+ERROR at line 1:
+ORA-01722: invalid number     #SINCE NAME IS NOT NUMERIC
+
+
+SQL> SELECT COUNT(FNAME) FROM EMPLOYEE;
+
+COUNT(FNAME)
+------------
+           5
+		   
+#BUT THIS WORKS BECAUSE COUNT GIVES THE COUNT OF ROWS
+
+
+#AGGREGATE ON NULL VALUED COL
+
+SQL> SELECT COMM,FNAME FROM EMPLOYEE;
+
+      COMM FNAME
+---------- --------------------
+           ABHI
+      5000 PADDY
+           BHAVNA
+           JOSEPH
+           JOE
+		   
+SQL> SELECT AVG(COMM) FROM EMPLOYEE;
+
+ AVG(COMM)
+----------
+      5000
+	  
+#AVG SHOULD HAVE BEEN 5000/5=1000 BUT INSTEAD IT IS 5000/1 HERE - ERRORSOME RESULT
+#TO COMBAT THE ABOVE ISSUE , REPLACE THE NULL VALUED RECORDS WITH 0
+
+SQL> SELECT AVG(NVL(COMM,0)) FROM EMPLOYEE;
+
+AVG(NVL(COMM,0))
+----------------
+            1000
+			
+			
+#CASE OF USING AGGREGATE IN WHERE CLAUSE
+
+SQL> SELECT SALARY FROM EMPLOYEE WHERE SALARY>AVG(SALARY);
+SELECT SALARY FROM EMPLOYEE WHERE SALARY>AVG(SALARY)
+                                         *
+ERROR at line 1:
+ORA-00934: group function is not allowed here
+
+
+SQL> SELECT SALARY FROM EMPLOYEE WHERE SALARY>(SELECT AVG(SALARY) FROM EMPLOYEE);
+
+    SALARY
+----------
+      6000
+      7000
+
+
+#GROUP BY	  
+#IN THIS CASE THERE ARE NO REPEATING SET OF DNO 
+
+SQL> SELECT EMP_NO,DNO,SALARY,ADDR FROM EMPLOYEE;
+
+EMP_ DNO      SALARY ADDR
+---- ---- ---------- --------------------
+E1   D1         5000 KOL
+E2   D4         6000 BLR
+E3   D3         5600 BHOPAL
+E5   D2         7000 DEL
+E4   D5         5500 KAK
+E6   D1        10000 PUNE
+E7   D1        11000 MUM
+
+SQL> SELECT AVG(SALARY),DNO FROM EMPLOYEE GROUP BY DNO;
+
+AVG(SALARY) DNO
+----------- ----
+ 8666.66667 D1
+       6000 D4
+       5500 D5
+       7000 D2
+       5600 D3
+
+#SUBQUERIES
+
+SQL> SELECT FNAME,DNO,SALARY FROM EMPLOYEE WHERE SALARY=(SELECT MIN(SALARY) FROM EMPLOYEE) GROUP BY D
+NO;
+SELECT FNAME,DNO,SALARY FROM EMPLOYEE WHERE SALARY=(SELECT MIN(SALARY) FROM EMPLOYEE) GROUP BY DNO
+       *
+ERROR at line 1:
+ORA-00979: not a GROUP BY expression
+
+SELECT FNAME,DNO,SALARY FROM EMPLOYEE WHERE SALARY=(SELECT MIN(SALARY) FROM EMPLOYEE GROUP BY DN
+
+T FNAME,DNO,SALARY FROM EMPLOYEE WHERE SALARY=(SELECT MIN(SALARY) FROM EMPLOYEE GROUP BY DNO)
+                                               *
+ at line 1:
+1427: single-row subquery returns more than one row
+
+
+#MULTIVALUED  COMPARATOR
+
+#IN
+
+SQL> SELECT FNAME,DNO,SALARY FROM EMPLOYEE WHERE SALARY IN (SELECT MIN(SALARY) FROM EMPLOYEE GROUP BY
+ DNO);
+
+FNAME                DNO      SALARY
+-------------------- ---- ----------
+ABHI                 D1         5000
+PADDY                D4         6000
+JOE                  D5         5500
+JOSEPH               D2         7000
+BHAVNA               D3         5600
+
+#ANY 
+
+SQL> SELECT FNAME,DNO,SALARY FROM EMPLOYEE WHERE SALARY=ANY(SELECT MIN(SALARY) FROM EMPLOYEE GROUP BY
+ DNO);
+
+FNAME                DNO      SALARY
+-------------------- ---- ----------
+ABHI                 D1         5000
+PADDY                D4         6000
+JOE                  D5         5500
+JOSEPH               D2         7000
+BHAVNA               D3         5600
+
+#ALL
+
+SQL> SELECT FNAME,DNO,SALARY FROM EMPLOYEE WHERE SALARY>ALL(SELECT MIN(SALARY) FROM EMPLOYEE GROUP BY
+ DNO);
+
+FNAME                DNO      SALARY
+-------------------- ---- ----------
+SANDIPAN             D1        10000
+DHARMIK              D1        11000
+

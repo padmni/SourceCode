@@ -1,0 +1,38 @@
+```{r}
+n=1
+  for(i in 6:1)
+  {
+    for(j in 1:i)
+    {
+      cat(" ")
+      if(j==i)
+      {
+        for(k in 1:n)
+        {
+          cat("*")
+        }
+      }
+    }
+    cat("\n")
+    n=n+2
+  }
+n=n-4
+for(i in 2:6)
+{
+  for(j in 1:i)
+  {
+    cat(" ")
+    if(j==i)
+    {
+      for(k in 1:n)
+      {
+        cat("*")
+      }
+    }
+  }
+  cat("\n")
+  n=n-2
+}
+
+
+```
