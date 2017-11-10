@@ -1,0 +1,172 @@
+---
+title: "ML_Hackathon"
+author: "Padmni Bharadwaj"
+date: "10 November 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(mice)
+library(missForest)
+library(VIM)
+library(tree)
+library(class)
+library(e1071)
+library(dplyr)
+library(corrplot)
+tt <- read.csv("D:/Academics/datasets/Model_Data.csv")
+
+```
+2. Define your data exploration, imputation and visualization approach. 
+```{R}
+table(is.na(tt))
+nlevels(tt$Occupation)
+nrow(tt)
+str(tt)
+
+md.pattern(tt)
+
+```
+
+Visual presentation of dataframe
+```{r}
+plot_imp<-aggr(tt,ylab=c("missing data","pattern"))
+corr <- cor(select(tt,c(colnames(tt))))
+corrplot(corr)
+```
+
+
+6. Build 3 Models, each using one of different type of algorithm. Send me the model building command. (1 mark each + 1 for creative "DS" think = total 4 marks)
+model1 =tree(Salary~.,data=tt.train)
+model2 =knn( train = pc_train_data, test = pc_test_data, cl = pc_train_label,k )
+model3 =model = naiveBayes(Salary~.,data=tt.train)
+```{r}
+#Decision Tree
+tt <- read.csv("D:/Academics/datasets/Model_Data.csv")
+
+tt$Salary=gsub("\\.", "", tt$Salary)
+tt$Salary=as.factor(tt$Salary)
+
+Mode <- function(v) {
+uniqv <- unique(v)
+uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+if(is.factor(tt[,i])){
+for(i in 1:ncol(tt)){
+ for(j in 1:nrow(tt)){
+   if(tt[j,i]==' ?'){
+     tt[j,i]=Mode(tt[,i])
+   }
+
+}
+}
+}
+
+if(is.numeric(tt[,i])){
+for(i in 1:ncol(tt)){
+ for(j in 1:nrow(tt)){
+   if(tt[j,i]==' ?'){
+     tt[j,i]=mean(tt[,i])
+   }
+
+}
+}
+}
+for(i in 1:ncol(tt))
+{
+if(!is.numeric(tt[,i]))
+{
+tt[,i]=as.numeric(tt[,i])
+}
+}
+
+set.seed(0009) 
+
+sample = sample.int(n=nrow(tt), size = floor(.8*nrow(tt)),replace = F)
+
+tt.train = tt[sample,]
+tt.test = tt[-sample,]
+
+
+tree.model = tree(Salary~.,data=tt.train)
+
+model_prediction = predict(tree.model,tt.test)
+m=c(model_prediction)
+maxidx=function(arr){
+  return(which(arr == max(arr)))}
+
+idx = apply(as.matrix(m)[,1,drop=F],c(1),maxidx)
+modelpred = c('1','2')[idx]
+confmat = table(modelpred,tt.test$Salary)
+accuracy=sum(diag(confmat))/sum(confmat)
+accuracy*100
+```
+
+```{r}
+#k-NN
+tt <- read.csv("D:/Academics/datasets/Model_Data.csv")
+
+tt$Salary=gsub("\\.", "", tt$Salary)
+tt$Salary=as.factor(tt$Salary)
+
+for(i in 1:ncol(tt))
+{
+if(!is.numeric(tt[,i]))
+{
+tt[,i]=as.numeric(tt[,i])
+}
+}
+
+
+set.seed(0009) 
+
+sample = sample.int(n=nrow(tt), size = floor(.8*nrow(tt)),replace = F)
+
+tt.train = tt[sample,]
+tt.test = tt[-sample,]
+
+#k-NN
+pc_train_data=tt[sample,1:14]
+pc_test_data=tt[-sample,1:14]
+pc_train_label=tt[sample,15]
+pc_test_label=tt[-sample,15] 
+k=5
+model2 = knn( train = pc_train_data, test = pc_test_data, cl = pc_train_label,k )
+
+confmat = table(model2,pc_test_label)
+
+accuracy=sum(diag(confmat))/sum(confmat)
+accuracy*100
+```
+
+```{r}
+#Naive-Bayes
+tt <- read.csv("D:/Academics/datasets/Model_Data.csv")
+
+tt$Salary=gsub("\\.", "", tt$Salary)
+tt$Salary=as.factor(tt$Salary)
+
+set.seed(0009)
+sample = sample.int(n=nrow(tt), size = floor(.8*nrow(tt)),replace = F)
+
+tt.train = tt[sample,]
+tt.test = tt[-sample,]
+model3= naiveBayes(Salary~.,data=tt.train)
+
+pred = predict(model3,tt.test[,-15])
+
+confmat = table(tt.test$Salary,pred)
+
+accuracy=sum(diag(confmat))/sum(confmat)
+accuracy*100
+```
+7. Predict your model performance on each of the 3 models and submit ( 1 mark each = total 3 marks)
+model1_accuracy=76.08073
+model2_accuracy =77.73438
+modell3_accuracy=82.72135
+8. Generalization ( 1 mark)
+
+9. Upload details into your account on GIT Hub ( 1 mark)
